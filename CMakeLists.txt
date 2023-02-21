@@ -15,7 +15,7 @@ if(${CMAKE_VERSION} VERSION_LESS 3.12)
 endif()
 project(ATLTileCalTB)
 
-find_package(Celeritas 0.2 REQUIRED)
+find_package(Celeritas 0.3 REQUIRED)
 
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
