@@ -1,6 +1,5 @@
 #include "Celeritas.hh"
 
-#include "DetectorConstruction.hh"
 #include <G4Threading.hh>
 #include <accel/AlongStepFactory.hh>
 #include <celeritas/field/UniformFieldData.hh>

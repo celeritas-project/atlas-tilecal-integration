@@ -29,6 +29,11 @@
 //
 #include <filesystem>
 
+// Includes from Celeritas
+//
+#include "Celeritas.hh"
+#include <accel/ExceptionConverter.hh>
+
 // Constructor and de-constructor
 //
 ATLTileCalTBRunAction::ATLTileCalTBRunAction(ATLTileCalTBEventAction* eventAction)
@@ -101,10 +106,37 @@ void ATLTileCalTBRunAction::BeginOfRunAction(const G4Run* run)
 #ifdef ATLTileCalTB_PulseOutput
   std::filesystem::create_directory(pulse_run_path);
 #endif
+
+  // Set up celeritas
+  //
+  celeritas::ExceptionConverter HandleExceptions{"celer0001"};
+
+  if (G4Threading::IsMasterThread()) {
+    CELER_TRY_HANDLE(CelerSharedParams().Initialize(CelerSetupOptions()), HandleExceptions);
+  }
+  else {
+    CELER_TRY_HANDLE(
+      celeritas::SharedParams::InitializeWorker(CelerSetupOptions()), HandleExceptions);
+  }
+
+  if (G4Threading::IsWorkerThread() || ! G4Threading::IsMultithreadedApplication()) {
+    CELER_TRY_HANDLE(CelerLocalTransporter().Initialize(CelerSetupOptions(), CelerSharedParams()),
+      HandleExceptions);
+  }
 }
 
 void ATLTileCalTBRunAction::EndOfRunAction(const G4Run* /*run*/)
 {
+  celeritas::ExceptionConverter HandleExceptions{"celer0005"};
+
+  if (CelerLocalTransporter()) {
+    CELER_TRY_HANDLE(CelerLocalTransporter().Finalize(), HandleExceptions);
+  }
+
+  if (G4Threading::IsMasterThread()) {
+    CELER_TRY_HANDLE(CelerSharedParams().Finalize(), HandleExceptions);
+  }
+
   auto analysisManager = G4AnalysisManager::Instance();
   analysisManager->Write();
   analysisManager->CloseFile();
