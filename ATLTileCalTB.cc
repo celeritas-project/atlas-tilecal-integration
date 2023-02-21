@@ -31,6 +31,8 @@
 #  include "G4FTFTunings.hh"
 #endif
 
+#include "Celeritas.hh"
+
 // CLI string outputs
 namespace CLIOutputs
 {
@@ -171,6 +173,7 @@ int main(int argc, char** argv)
 
   G4GDMLParser parser;
   parser.Read("TileTB_2B1EB_nobeamline.gdml", false);
+  CelerSetupOptions().geometry_file = "TileTB_2B1EB_nobeamline.gdml";
   runManager->SetUserInitialization(new ATLTileCalTBDetConstruction(parser));
 
   // Classes via ActionInitialization
