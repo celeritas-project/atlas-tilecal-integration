@@ -2,36 +2,35 @@
 // \file ATLTileCalTBStepAction.hh
 // \brief: definition of ATLTileCalTBStepAction
 //         class
-// \author: Lorenzo Pezzotti (CERN EP-SFT-sim) 
+// \author: Lorenzo Pezzotti (CERN EP-SFT-sim)
 //          @lopezzot
 // \start date: 8 June 2022
 //**************************************************
 
 #ifndef ATLTileCalTBStepAction_h
-#define ATLTileCalTBStepAction_h 1
+#  define ATLTileCalTBStepAction_h 1
 
-//Includers from Geant4
+// Includers from Geant4
 //
-#include "G4Step.hh"
-#include "G4UserSteppingAction.hh"
+#  include "G4Step.hh"
+#  include "G4UserSteppingAction.hh"
 
-//Includers from project files
+// Includers from project files
 //
-#include "ATLTileCalTBEventAction.hh"
+#  include "ATLTileCalTBEventAction.hh"
 
-class ATLTileCalTBStepAction: public G4UserSteppingAction {
+class ATLTileCalTBStepAction : public G4UserSteppingAction
+{
+ public:
+  ATLTileCalTBStepAction(ATLTileCalTBEventAction* EvtAction);
+  virtual ~ATLTileCalTBStepAction();
 
-    public:
-        ATLTileCalTBStepAction( ATLTileCalTBEventAction* EvtAction );
-        virtual ~ATLTileCalTBStepAction();
+  virtual void UserSteppingAction(const G4Step* aStep);
 
-        virtual void UserSteppingAction( const G4Step* aStep );
-    
-    private:
-        ATLTileCalTBEventAction* fEventAction;
-
+ private:
+  ATLTileCalTBEventAction* fEventAction;
 };
 
-#endif //ATLTileCalTBStepAction_h 1
+#endif  // ATLTileCalTBStepAction_h 1
 
 //**************************************************

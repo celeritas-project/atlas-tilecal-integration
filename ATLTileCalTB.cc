@@ -14,10 +14,10 @@
 // Includers from Geant4
 //
 #ifdef G4MULTITHREADED
-#include "G4MTRunManager.hh"
-#include "G4Threading.hh"
+#  include "G4MTRunManager.hh"
+#  include "G4Threading.hh"
 #else
-#include "G4RunManager.hh"
+#  include "G4RunManager.hh"
 #endif
 // #include "G4RunManagerFactory.hh" //only available from 10.7 on
 #include "G4GDMLParser.hh"
@@ -27,13 +27,15 @@
 #include "G4UImanager.hh"
 #include "G4Version.hh"
 #include "G4VisExecutive.hh"
-#if G4VERSION_NUMBER >= 1110 // >= Geant4-11.1.0
-#include "G4FTFTunings.hh"
+#if G4VERSION_NUMBER >= 1110  // >= Geant4-11.1.0
+#  include "G4FTFTunings.hh"
 #endif
 
 // CLI string outputs
-namespace CLIOutputs {
-void PrintHelp() {
+namespace CLIOutputs
+{
+void PrintHelp()
+{
   G4cout << "Usage: ATLTileCalTB [OPTION...]\n\n"
          << "Options:\n"
          << "  -m MACRO        path to macro file to run\n"
@@ -43,37 +45,39 @@ void PrintHelp() {
          << "  -h              print this help and exit\n"
          << G4endl;
 }
-void PrintError() {
-  G4cerr << "Wrong usage, see 'ATLTileCalTB -h' for more information" << G4endl;
-}
-} // namespace CLIOutputs
+void PrintError() { G4cerr << "Wrong usage, see 'ATLTileCalTB -h' for more information" << G4endl; }
+}  // namespace CLIOutputs
 
 // G4err output for FTFTune usage error
 //
-namespace PrintFTFTuneUsageError {
-void FTFTuneUsageError() {
+namespace PrintFTFTuneUsageError
+{
+void FTFTuneUsageError()
+{
   G4cerr << "Wrong FTF Alternative Tune Name selected. " << G4endl;
   G4cerr << "Geant4-11.1.0 valid indeces/names are: " << G4endl;
   G4cerr << "0(default)\n1(baryon-tune2022-v0)\n2(pion-tune2022-v0)\n3("
             "combined-tune2022-v0)"
          << G4endl;
 }
-} // namespace PrintFTFTuneUsageError
+}  // namespace PrintFTFTuneUsageError
 
 // G4err output for PhysListFactory usage error
 //
-namespace PrintPLFactoryUsageError {
-void PLFactoryUsageError() {
+namespace PrintPLFactoryUsageError
+{
+void PLFactoryUsageError()
+{
   G4cerr << "Wrong PLFactory usage: no name for selected PL. " << G4endl;
 }
-} // namespace PrintPLFactoryUsageError
+}  // namespace PrintPLFactoryUsageError
 
-int main(int argc, char **argv) {
-
+int main(int argc, char** argv)
+{
   // CLI variables
   G4String macro;
   G4String session;
-  G4String custom_pl = "FTFP_BERT"; // default physics list
+  G4String custom_pl = "FTFP_BERT";  // default physics list
 #ifdef G4MULTITHREADED
   G4int nThreads = G4Threading::G4GetNumberOfCores();
 #endif
@@ -94,31 +98,32 @@ int main(int argc, char **argv) {
     else if (G4String(argv[i]) == "-h") {
       CLIOutputs::PrintHelp();
       return 0;
-    } else {
+    }
+    else {
       CLIOutputs::PrintError();
       return 1;
     }
   }
 
-#if G4VERSION_NUMBER >= 1110 // >= Geant4-11.1.0
+#if G4VERSION_NUMBER >= 1110  // >= Geant4-11.1.0
   G4bool UseFTFTune = false;
   G4int FTFTuneIndex = 99;
   if (custom_pl.find("tune") != std::string::npos) {
     UseFTFTune = true;
     std::string pltune = custom_pl;
     char tuneidx = pltune.back();
-    FTFTuneIndex = tuneidx - '0'; // convert char to int
+    FTFTuneIndex = tuneidx - '0';  // convert char to int
     custom_pl = custom_pl.substr(0, custom_pl.size() - 6);
-    G4cout << "---> Using FTF alternative tune index: " << FTFTuneIndex
-           << " and PL: " << custom_pl << " <---" << G4endl;
+    G4cout << "---> Using FTF alternative tune index: " << FTFTuneIndex << " and PL: " << custom_pl
+           << " <---" << G4endl;
   }
 #endif
 
   // Activate interaction mode if no macro card is provided and define UI
   // session
   //
-  G4UIExecutive *ui = nullptr;
-  if (!macro.size()) { // if macro card is not passed
+  G4UIExecutive* ui = nullptr;
+  if (! macro.size()) {  // if macro card is not passed
     ui = new G4UIExecutive(argc, argv, session);
   }
 
@@ -137,8 +142,7 @@ int main(int argc, char **argv) {
   // Manadatory Geant4 classes
   //
   auto physListFactory = new G4PhysListFactory();
-  if (!physListFactory->IsReferencePhysList(
-          custom_pl)) { // if custom_pl is not a PLname exit
+  if (! physListFactory->IsReferencePhysList(custom_pl)) {  // if custom_pl is not a PLname exit
     PrintPLFactoryUsageError::PLFactoryUsageError();
     return 1;
   }
@@ -184,15 +188,14 @@ int main(int argc, char **argv) {
   //
   auto UImanager = G4UImanager::GetUIpointer();
 
-  if (!ui) {
+  if (! ui) {
     // execute an argument macro file if exist (second parser argument)
     G4String command = "/control/execute ";
-    UImanager->ApplyCommand(
-        "/process/em/verbose 0"); // avoid printing em processes
-    UImanager->ApplyCommand(
-        "/process/had/verbose 0"); // avoid printing had processes
+    UImanager->ApplyCommand("/process/em/verbose 0");  // avoid printing em processes
+    UImanager->ApplyCommand("/process/had/verbose 0");  // avoid printing had processes
     UImanager->ApplyCommand(command + macro);
-  } else {
+  }
+  else {
     UImanager->ApplyCommand("/control/execute init_vis.mac");
     if (ui->IsGUI()) {
       UImanager->ApplyCommand("/control/execute gui.mac");
