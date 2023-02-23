@@ -31,6 +31,8 @@
 #  include "G4FTFTunings.hh"
 #endif
 
+#include "ATLFTFP_BERT.hh"
+
 // CLI string outputs
 namespace CLIOutputs
 {
@@ -141,12 +143,8 @@ int main(int argc, char** argv)
 
   // Manadatory Geant4 classes
   //
-  auto physListFactory = new G4PhysListFactory();
-  if (! physListFactory->IsReferencePhysList(custom_pl)) {  // if custom_pl is not a PLname exit
-    PrintPLFactoryUsageError::PLFactoryUsageError();
-    return 1;
-  }
-  auto physicsList = physListFactory->GetReferencePhysList(custom_pl);
+  G4VModularPhysicsList* physicsList = new ATLFTFP_BERT;
+  physicsList->SetVerboseLevel(1);
   runManager->SetUserInitialization(physicsList);
 
   // Set FTF tunings (only => Geant4-11.1.0)
