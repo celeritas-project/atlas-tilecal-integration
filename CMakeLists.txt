@@ -15,6 +15,8 @@ if(${CMAKE_VERSION} VERSION_LESS 3.12)
 endif()
 project(ATLTileCalTB)
 
+find_package(Celeritas 0.3 REQUIRED)
+
 #----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
 # You can set WITH_GEANT4_UIVIS to OFF via the command line or ccmake/cmake-gui
@@ -70,6 +72,9 @@ file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 add_executable(ATLTileCalTB ATLTileCalTB.cc ${sources} ${headers})
 target_link_libraries(ATLTileCalTB ${Geant4_LIBRARIES})
 set_target_properties(ATLTileCalTB PROPERTIES CXX_STANDARD 17)
+
+include(CeleritasLibrary)
+celeritas_target_link_libraries(ATLTileCalTB Celeritas::accel)
 
 #----------------------------------------------------------------------------
 # Copy all scripts to the build directory, i.e. the directory in which we

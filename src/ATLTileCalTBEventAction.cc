@@ -41,6 +41,11 @@
 #  include <sstream>
 #endif
 
+// Includes from Celeritas
+//
+#include "Celeritas.hh"
+#include <accel/ExceptionConverter.hh>
+
 // Constructor and de-constructor
 //
 ATLTileCalTBEventAction::ATLTileCalTBEventAction(ATLTileCalTBPrimaryGenAction* pga)
@@ -76,6 +81,10 @@ void ATLTileCalTBEventAction::BeginOfEventAction([[maybe_unused]] const G4Event*
     "ATLTileCalTBpulse_Run" + std::to_string(runNumber) + "/Ev" + std::to_string(eventNumber));
   std::filesystem::create_directory(pulse_event_path);
 #endif
+
+  // Set event ID in local transporter
+  celeritas::ExceptionConverter call_g4exception{"celer0002"};
+  CELER_TRY_HANDLE(CelerLocalTransporter().SetEventId(event->GetEventID()), call_g4exception);
 }
 
 // GetHitsCollection method()
@@ -99,6 +108,9 @@ ATLTileCalTBHitsCollection* ATLTileCalTBEventAction::GetHitsCollection(
 //
 void ATLTileCalTBEventAction::EndOfEventAction(const G4Event* event)
 {
+  celeritas::ExceptionConverter call_g4exception{"celer0004"};
+  CELER_TRY_HANDLE(CelerLocalTransporter().Flush(), call_g4exception);
+
   auto analysisManager = G4AnalysisManager::Instance();
 
   G4int counter = 0;
