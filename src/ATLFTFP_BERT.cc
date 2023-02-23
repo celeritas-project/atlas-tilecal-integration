@@ -172,14 +172,14 @@ void ATLEmStandardPhysics::ConstructProcess()
   // e-
   particle = G4Electron::Electron();
 
-  G4eMultipleScattering* msc = new G4eMultipleScattering;
-  G4UrbanMscModel* msc1 = new G4UrbanMscModel();
-  //G4WentzelVIModel* msc2 = new G4WentzelVIModel();
-  msc1->SetHighEnergyLimit(highEnergyLimit);
-  //msc2->SetLowEnergyLimit(highEnergyLimit);
-  msc->SetEmModel(msc1);
-  //msc->SetEmModel(msc2);
-
+//  G4eMultipleScattering* msc = new G4eMultipleScattering;
+//  G4UrbanMscModel* msc1 = new G4UrbanMscModel();
+//  //G4WentzelVIModel* msc2 = new G4WentzelVIModel();
+//  msc1->SetHighEnergyLimit(highEnergyLimit);
+//  //msc2->SetLowEnergyLimit(highEnergyLimit);
+//  msc->SetEmModel(msc1);
+//  //msc->SetEmModel(msc2);
+//
   //G4eCoulombScatteringModel* ssm = new G4eCoulombScatteringModel();
   //G4CoulombScattering* ss = new G4CoulombScattering();
   //ss->SetEmModel(ssm);
@@ -187,7 +187,7 @@ void ATLEmStandardPhysics::ConstructProcess()
   //ssm->SetLowEnergyLimit(highEnergyLimit);
   //ssm->SetActivationLowEnergyLimit(highEnergyLimit);
 
-  ph->RegisterProcess(msc, particle);
+//  ph->RegisterProcess(msc, particle);
   ph->RegisterProcess(new G4eIonisation(), particle);
   ph->RegisterProcess(new G4eBremsstrahlung(), particle);
   //ph->RegisterProcess(ss, particle);
@@ -195,14 +195,14 @@ void ATLEmStandardPhysics::ConstructProcess()
   // e+
   particle = G4Positron::Positron();
 
-  msc = new G4eMultipleScattering;
-  msc1 = new G4UrbanMscModel();
-  //msc2 = new G4WentzelVIModel();
-  msc1->SetHighEnergyLimit(highEnergyLimit);
-  //msc2->SetLowEnergyLimit(highEnergyLimit);
-  msc->SetEmModel(msc1);
-  //msc->SetEmModel(msc2);
-
+//  msc = new G4eMultipleScattering;
+//  msc1 = new G4UrbanMscModel();
+//  //msc2 = new G4WentzelVIModel();
+//  msc1->SetHighEnergyLimit(highEnergyLimit);
+//  //msc2->SetLowEnergyLimit(highEnergyLimit);
+//  msc->SetEmModel(msc1);
+//  //msc->SetEmModel(msc2);
+//
   //ssm = new G4eCoulombScatteringModel();
   //ss = new G4CoulombScattering();
   //ss->SetEmModel(ssm);
@@ -210,7 +210,7 @@ void ATLEmStandardPhysics::ConstructProcess()
   //ssm->SetLowEnergyLimit(highEnergyLimit);
   //ssm->SetActivationLowEnergyLimit(highEnergyLimit);
 
-  ph->RegisterProcess(msc, particle);
+  //ph->RegisterProcess(msc, particle);
   ph->RegisterProcess(new G4eIonisation(), particle);
   ph->RegisterProcess(new G4eBremsstrahlung(), particle);
   ph->RegisterProcess(new G4eplusAnnihilation(), particle);
