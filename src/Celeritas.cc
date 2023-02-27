@@ -2,7 +2,6 @@
 
 #include <G4Threading.hh>
 #include <accel/AlongStepFactory.hh>
-#include <celeritas/em/UrbanMscParams.hh>
 #include <celeritas/field/UniformFieldData.hh>
 #include <celeritas/global/alongstep/AlongStepGeneralLinearAction.hh>
 #include <celeritas/global/alongstep/AlongStepUniformMscAction.hh>
@@ -21,9 +20,7 @@ std::shared_ptr<ExplicitActionInterface const> make_nofield_along_step(
 {
     CELER_LOG(debug) << "Creating along-step action with linear propagation";
     return celeritas::AlongStepGeneralLinearAction::from_params(input.action_id, *input.material,
-      *input.particle,
-      celeritas::UrbanMscParams::from_import(*input.particle, *input.material, *input.imported),
-      input.imported->em_params.energy_loss_fluct);
+      *input.particle, *input.physics, input.imported->em_params.energy_loss_fluct);
 }
 
 }  // namespace
@@ -55,9 +52,6 @@ SetupOptions& CelerSetupOptions()
 
     // Using the pre-step point, reconstruct the G4 touchable handle.
     so.sd.locate_touchable = true;
-
-    // Save diagnostic information
-    so.output_file = "celeritas-tilecal.json";
 
     // Pre-step time is used
     so.sd.pre.global_time = true;
