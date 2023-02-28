@@ -18,9 +18,9 @@ namespace
 std::shared_ptr<ExplicitActionInterface const> make_nofield_along_step(
   AlongStepFactoryInput const& input)
 {
-    CELER_LOG(debug) << "Creating along-step action with linear propagation";
-    return celeritas::AlongStepGeneralLinearAction::from_params(input.action_id, *input.material,
-      *input.particle, *input.physics, input.imported->em_params.energy_loss_fluct);
+  CELER_LOG(debug) << "Creating along-step action with linear propagation";
+  return celeritas::AlongStepGeneralLinearAction::from_params(input.action_id, *input.material,
+    *input.particle, *input.physics, input.imported->em_params.energy_loss_fluct);
 }
 
 }  // namespace

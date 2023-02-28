@@ -77,6 +77,7 @@ ATLTileCalTBRunAction::ATLTileCalTBRunAction(ATLTileCalTBEventAction* eventActio
   analysisManager->CreateNtupleDColumn("Sdep", fEventAction->GetSdepVector());
   analysisManager->CreateNtupleIColumn("PDGID");
   analysisManager->CreateNtupleFColumn("EBeam");
+  analysisManager->CreateNtupleDColumn("XEdep", fEventAction->GetXEdepVector());
   analysisManager->FinishNtuple();
 }
 

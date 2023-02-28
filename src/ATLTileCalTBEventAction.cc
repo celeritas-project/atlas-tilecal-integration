@@ -56,6 +56,7 @@ ATLTileCalTBEventAction::ATLTileCalTBEventAction(ATLTileCalTBPrimaryGenAction* p
 {
   fEdepVector = std::vector<G4double>(fNoOfCells, 0.);
   fSdepVector = std::vector<G4double>(fNoOfCells, 0.);
+  fXEdepVector = std::vector<G4double>(1024, 0.);  // see XMin/XMax
 }
 
 ATLTileCalTBEventAction::~ATLTileCalTBEventAction() {}
@@ -73,6 +74,7 @@ void ATLTileCalTBEventAction::BeginOfEventAction([[maybe_unused]] const G4Event*
   for (auto& value : fSdepVector) {
     value = 0.;
   }
+  std::fill(fXEdepVector.begin(), fXEdepVector.end(), 0.0);
 
 #ifdef ATLTileCalTB_PulseOutput
   auto runNumber = G4RunManager::GetRunManager()->GetCurrentRun()->GetRunID();

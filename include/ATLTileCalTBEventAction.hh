@@ -46,6 +46,7 @@ class ATLTileCalTBEventAction : public G4UserEventAction
 
   std::vector<G4double>& GetEdepVector() { return fEdepVector; };
   std::vector<G4double>& GetSdepVector() { return fSdepVector; };
+  std::vector<G4double>& GetXEdepVector() { return fXEdepVector; };
 
  private:
   ATLTileCalTBHitsCollection* GetHitsCollection(G4int hcID, const G4Event* event) const;
@@ -54,6 +55,7 @@ class ATLTileCalTBEventAction : public G4UserEventAction
   std::array<G4double, nAuxData> fAux;
   std::vector<G4double> fEdepVector;
   std::vector<G4double> fSdepVector;
+  std::vector<G4double> fXEdepVector;
 #  ifdef ATLTileCalTB_PulseOutput
   std::filesystem::path pulse_event_path;
 #  endif

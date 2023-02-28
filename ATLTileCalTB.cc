@@ -31,6 +31,8 @@
 #  include "G4FTFTunings.hh"
 #endif
 
+#include <accel/Logger.hh>
+
 // CLI string outputs
 namespace CLIOutputs
 {
@@ -138,6 +140,8 @@ int main(int argc, char** argv)
 #else
   auto runManager = new G4RunManager;
 #endif
+
+  celeritas::self_logger() = celeritas::make_mt_logger(*runManager);
 
   // Manadatory Geant4 classes
   //

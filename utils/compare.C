@@ -24,8 +24,8 @@
 void compare()
 {
   // Load tfiles and ttrees
-  auto const g4_file = new TFile("ATLTileCalTBout_Run0-10k-piplus-18gev.g4.root", "read");
-  auto const cel_file = new TFile("ATLTileCalTBout_Run0-10k-piplus-18gev.cel.root", "read");
+  auto const g4_file = new TFile("ATLTileCalTBout_Run0.root", "read");
+  auto const cel_file = new TFile("../g4-10gev-nomsc/ATLTileCalTBout_Run0.root", "read");
 
   auto const g4_tree = (TTree*)g4_file->Get("ATLTileCalTBout");
   auto const cel_tree = (TTree*)cel_file->Get("ATLTileCalTBout");
@@ -136,12 +136,10 @@ void compare()
     legend->Draw();
     gPad->RedrawAxis();
 
-#if 0
     // Save each canvas into a pdf file
     std::string pdf_filename = key->first + ".pdf";
     canvases[i]->SaveAs(pdf_filename.c_str());
     pdf_list += pdf_filename + " ";
-#endif
   }
 
 #if 0
