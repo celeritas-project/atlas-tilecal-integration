@@ -21,6 +21,8 @@
 
 namespace ATLTileCalTBGeometry
 {
+constexpr double XMin() { return 2000; }
+constexpr double XMax() { return 2200; }
 
 enum class Module
 {

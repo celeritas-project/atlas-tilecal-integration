@@ -76,6 +76,16 @@ G4bool ATLTileCalTBSensDet::ProcessHits(G4Step* aStep, G4TouchableHistory*)
   auto edep = aStep->GetTotalEnergyDeposit();
   if (edep == 0.) return false;
 
+  // Add x energy deposition *before* discriminating against time
+  G4ThreeVector prestepPos = aStep->GetPreStepPoint()->GetPosition();
+  if (prestepPos[0] >= ATLTileCalTBGeometry::XMin() &&
+      prestepPos[0] < ATLTileCalTBGeometry::XMax())
+  {
+      auto& xedep = something->GetXEdepVector();
+      std::size_t bin = xedep.size() * (prestepPos[0] - ATLTileCalTBGeometry::XMin()) / (ATLTileCalTBGeometry::XMax() - ATLTileCalTBGeometry::XMin());
+      xedep[bin] += edep;
+  }
+
   // we only record data within the time window of the digitization
   auto time = aStep->GetPreStepPoint()->GetGlobalTime();
   if (time > ATLTileCalTBConstants::frame_time_window) return false;
@@ -90,7 +100,6 @@ G4bool ATLTileCalTBSensDet::ProcessHits(G4Step* aStep, G4TouchableHistory*)
 
   // get local coordinates of PreStepPoint in scintillator
   //
-  G4ThreeVector prestepPos = aStep->GetPreStepPoint()->GetPosition();
   G4ThreeVector localCoord =
     aStep->GetPreStepPoint()->GetTouchableHandle()->GetHistory()->GetTopTransform().TransformPoint(
       prestepPos);

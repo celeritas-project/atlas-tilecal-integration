@@ -41,7 +41,7 @@ void ATLTileCalTBActInitialization::Build() const
   SetUserAction(EventAction);
   SetUserAction(new ATLTileCalTBStepAction(EventAction));
 
-  SetUserAction(new ATLTileCalTBTrackingAction());
+  //SetUserAction(new ATLTileCalTBTrackingAction());
 }
 
 //**************************************************
