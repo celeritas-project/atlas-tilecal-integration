@@ -17,6 +17,9 @@
 #include "ATLTileCalTBStepAction.hh"
 #include "ATLTileCalTBTrackingAction.hh"
 
+#include <corecel/io/Logger.hh>
+#include <corecel/sys/Environment.hh>
+
 // Constructor and de-constructor
 //
 ATLTileCalTBActInitialization::ATLTileCalTBActInitialization() : G4VUserActionInitialization() {}
@@ -41,7 +44,13 @@ void ATLTileCalTBActInitialization::Build() const
   SetUserAction(EventAction);
   SetUserAction(new ATLTileCalTBStepAction(EventAction));
 
-  SetUserAction(new ATLTileCalTBTrackingAction());
+  if (! celeritas::getenv("CELER_DISABLE").empty()) {
+    CELER_LOG(info) << "Disabling Celeritas offloading since the 'CELER_DISABLE' "
+                       "environment variable is present and non-empty";
+  }
+  else {
+    SetUserAction(new ATLTileCalTBTrackingAction());
+  }
 }
 
 //**************************************************
