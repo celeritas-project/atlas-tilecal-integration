@@ -88,12 +88,17 @@ void compare()
     num_bins = std::min(num_bins, 100);
 
     // Initialize histograms
-    std::string g4_name = "g4_" + branch_name;
-    std::string cel_name = "cel_" + branch_name;
-    histograms_g4[i] =
-      new TH1D("", branch_name.c_str(), num_bins, key->second.min, key->second.max);
-    histograms_cel[i] =
-      new TH1D("", branch_name.c_str(), num_bins, key->second.min, key->second.max);
+    if (key->first == "EdepSum") {
+      // Manually update x-axis limits for EdepSum only
+      histograms_g4[i] = new TH1D("", branch_name.c_str(), num_bins, 0, 2.5e3);
+      histograms_cel[i] = new TH1D("", branch_name.c_str(), num_bins, 0, 2.5e3);
+    }
+    else {
+      histograms_g4[i] =
+        new TH1D("", branch_name.c_str(), num_bins, key->second.min, key->second.max);
+      histograms_cel[i] =
+        new TH1D("", branch_name.c_str(), num_bins, key->second.min, key->second.max);
+    }
   }
 
   // Fill histograms
@@ -169,7 +174,7 @@ void compare()
     fit_stats_cel->SetX2NDC(.86);
     fit_stats_cel->SetY2NDC(.53);
 
-    // Draw legend and update axis
+    // Draw legend
     legend->Draw();
 
     // Save each canvas into a pdf file
