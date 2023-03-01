@@ -1,10 +1,13 @@
 #include <TBranch.h>
 #include <TCanvas.h>
+#include <TF1.h>
 #include <TFile.h>
 #include <TH1D.h>
 #include <TLeaf.h>
 #include <TLegend.h>
 #include <TObjArray.h>
+#include <TPaveText.h>
+#include <TStyle.h>
 #include <TSystem.h>
 #include <TTree.h>
 
@@ -88,9 +91,9 @@ void compare()
     std::string g4_name = "g4_" + branch_name;
     std::string cel_name = "cel_" + branch_name;
     histograms_g4[i] =
-      new TH1D(g4_name.c_str(), g4_name.c_str(), num_bins, key->second.min, key->second.max);
+      new TH1D("", branch_name.c_str(), num_bins, key->second.min, key->second.max);
     histograms_cel[i] =
-      new TH1D(cel_name.c_str(), cel_name.c_str(), num_bins, key->second.min, key->second.max);
+      new TH1D("", branch_name.c_str(), num_bins, key->second.min, key->second.max);
   }
 
   // Fill histograms
@@ -107,9 +110,13 @@ void compare()
   }
 
   // Create one legend for all plots
-  auto const legend = new TLegend(0.67, 0.7, 0.85, 0.85);
+  auto const transparency = 0.75;
+  auto const legend = new TLegend(0.35, 0.67, 0.55, 0.85);
   legend->AddEntry(histograms_g4[0], "Geant4", "l");
   legend->AddEntry(histograms_cel[0], "Celeritas", "l");
+  legend->AddEntry(new TF1("fit", "gaus", 0, 1), "Best fit", "l");
+  legend->SetLineColor(kGray);
+  legend->SetFillColorAlpha(kWhite, transparency);
 
   // Store list of pdf filenames
   std::string pdf_list;
@@ -121,7 +128,6 @@ void compare()
     auto const& key = map_branches_limits.find(branches->At(i)->GetName());
     std::string name = "c_" + key->first;
     canvases[i] = new TCanvas(name.c_str(), name.c_str(), 700, 500);
-    canvases[i]->SetLogy();
 
     // Set up plot attributes
     histograms_g4[i]->SetLineColor(kBlack);
@@ -132,9 +138,39 @@ void compare()
     histograms_g4[i]->Draw();
     histograms_cel[i]->Draw("sames");
 
+    auto fit = new TF1("fit", "gaus", key->second.min, key->second.max);
+    histograms_g4[i]->Fit("fit", "R");
+    histograms_cel[i]->Fit("fit", "R");
+
+    // canvases[i]->SetObjectStat(true);
+    histograms_g4[i]->SetStats(true);
+    histograms_cel[i]->SetStats(true);
+    gStyle->SetOptFit(true);
+    gStyle->SetOptStat(1111);
+
+    auto fit_stats_g4 = (TPaveText*)histograms_g4[i]->FindObject("stats");
+    histograms_g4[i]->SetName("Geant4");
+    fit_stats_g4->SetFillColorAlpha(kWhite, transparency);
+    fit_stats_g4->SetLineColor(kGray);
+    fit_stats_g4->SetShadowColor(kWhite);
+    fit_stats_g4->SetX1NDC(.57);
+    fit_stats_g4->SetY1NDC(.55);
+    fit_stats_g4->SetX2NDC(.86);
+    fit_stats_g4->SetY2NDC(.85);
+    fit_stats_g4->Draw();
+
+    auto fit_stats_cel = (TPaveText*)histograms_cel[i]->FindObject("stats");
+    histograms_cel[i]->SetName("Celeritas");
+    fit_stats_cel->SetFillColorAlpha(kWhite, transparency);
+    fit_stats_cel->SetLineColor(kGray);
+    fit_stats_cel->SetShadowColor(kWhite);
+    fit_stats_cel->SetX1NDC(.57);
+    fit_stats_cel->SetY1NDC(.23);
+    fit_stats_cel->SetX2NDC(.86);
+    fit_stats_cel->SetY2NDC(.53);
+
     // Draw legend and update axis
     legend->Draw();
-    gPad->RedrawAxis();
 
     // Save each canvas into a pdf file
     std::string pdf_filename = key->first + ".pdf";
