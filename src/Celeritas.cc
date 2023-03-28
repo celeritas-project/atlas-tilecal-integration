@@ -2,32 +2,15 @@
 
 #include <G4Threading.hh>
 #include <accel/AlongStepFactory.hh>
-#include <celeritas/em/UrbanMscParams.hh>
 #include <celeritas/field/UniformFieldData.hh>
-#include <celeritas/global/alongstep/AlongStepGeneralLinearAction.hh>
-#include <celeritas/global/alongstep/AlongStepUniformMscAction.hh>
 #include <celeritas/io/ImportData.hh>
+#include <accel/LocalTransporter.hh>
+#include <accel/SetupOptions.hh>
+#include <accel/SharedParams.hh>
 
 #include <memory>
 
 using namespace celeritas;
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-namespace
-{
-
-std::shared_ptr<ExplicitActionInterface const> make_nofield_along_step(
-  AlongStepFactoryInput const& input)
-{
-  CELER_LOG(debug) << "Creating along-step action with linear propagation";
-  return celeritas::AlongStepGeneralLinearAction::from_params(input.action_id, *input.material,
-    *input.particle,
-    celeritas::UrbanMscParams::from_import(*input.particle, *input.material, *input.imported),
-    input.imported->em_params.energy_loss_fluct);
-}
-
-}  // namespace
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 // Global shared setup options
 SetupOptions& CelerSetupOptions()
@@ -37,13 +20,13 @@ SetupOptions& CelerSetupOptions()
     SetupOptions so;
 
     // Set along-step factory
-    so.make_along_step = make_nofield_along_step;
+    so.make_along_step = celeritas::UniformAlongStepFactory();
 
     so.max_num_tracks = 1024;
     so.max_num_events = 10000;
     so.initializer_capacity = 1024 * 128;
     so.secondary_stack_factor = 3.0;
-    so.ignore_processes = {"CoulombScat", "muIoni", "muBrems", "muPairProd"};
+    so.ignore_processes = {"CoulombScat"};
 
     // Use Celeritas "hit processor" to call back to Geant4 SDs.
     so.sd.enabled = true;
@@ -78,4 +61,11 @@ LocalTransporter& CelerLocalTransporter()
 {
   static G4ThreadLocal LocalTransporter lt;
   return lt;
+}
+
+// Thread-local offload interface
+SimpleOffload& CelerSimpleOffload()
+{
+  static G4ThreadLocal SimpleOffload so;
+  return so;
 }

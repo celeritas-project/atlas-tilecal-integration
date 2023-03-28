@@ -16,9 +16,7 @@
 #include "ATLTileCalTBRunAction.hh"
 #include "ATLTileCalTBStepAction.hh"
 #include "ATLTileCalTBTrackingAction.hh"
-
-#include <corecel/io/Logger.hh>
-#include <corecel/sys/Environment.hh>
+#include "Celeritas.hh"
 
 // Constructor and de-constructor
 //
@@ -32,6 +30,8 @@ void ATLTileCalTBActInitialization::BuildForMaster() const
 {
   auto EventAction = new ATLTileCalTBEventAction(nullptr);
   SetUserAction(new ATLTileCalTBRunAction(EventAction));
+
+  CelerSimpleOffload().BuildForMaster(&CelerSetupOptions(), &CelerSharedParams());
 }
 
 void ATLTileCalTBActInitialization::Build() const
@@ -44,13 +44,8 @@ void ATLTileCalTBActInitialization::Build() const
   SetUserAction(EventAction);
   SetUserAction(new ATLTileCalTBStepAction(EventAction));
 
-  if (! celeritas::getenv("CELER_DISABLE").empty()) {
-    CELER_LOG(info) << "Disabling Celeritas offloading since the 'CELER_DISABLE' "
-                       "environment variable is present and non-empty";
-  }
-  else {
-    SetUserAction(new ATLTileCalTBTrackingAction());
-  }
+  CelerSimpleOffload().Build(&CelerSetupOptions(), &CelerSharedParams(), &CelerLocalTransporter());
+  SetUserAction(new ATLTileCalTBTrackingAction());
 }
 
 //**************************************************

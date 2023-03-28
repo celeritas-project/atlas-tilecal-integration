@@ -141,8 +141,6 @@ int main(int argc, char** argv)
   auto runManager = new G4RunManager;
 #endif
 
-  celeritas::self_logger() = celeritas::make_mt_logger(*runManager);
-
   // Manadatory Geant4 classes
   //
   auto physListFactory = new G4PhysListFactory();
